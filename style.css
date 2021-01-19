@@ -52,7 +52,22 @@ html, body
   border-collapse: collapse;
 }
 
-#r5-c5
+.start
 {
   background-color: green;
+}
+
+.target
+{
+  background-color: red;
+}
+
+.unvisited
+{
+  background-color: gray;
+}
+
+.wall
+{
+  background-color: black;
 }
