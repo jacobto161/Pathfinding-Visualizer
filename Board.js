@@ -13,4 +13,14 @@ class Board
   {
     return nodes[id.substring(id.indexOf("r") + 1, id.indexOf("c"))][id.substring(id.indexOf("c" + 1))];
   }
+
+  getNodeList()
+  {
+    var list = [];
+    for(var i = 0; i < nodes.length; i++)
+    {
+      list = list.concat(nodes[i]);
+    }
+    return list;
+  }
 }
