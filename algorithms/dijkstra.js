@@ -8,12 +8,12 @@
 function dijkstra(board, startNode, endNode)
 {
   startNode.distance = 0;
-  var visitedNodesInOrder = [];
+  let visitedNodesInOrder = [];
   var unvisitedNodes = board.getNodeList();
 
   while(unvisitedNodes.length > 0)
   {
-    sortNodesByDistance();
+    sortNodesByDistance(unvisitedNodes);
     //Skips Nodes if they are walls.
     if(unvisitedNodes[0].isWall)
     {
@@ -37,7 +37,7 @@ function dijkstra(board, startNode, endNode)
 }
 
 //Sorts unvisited node array by distance.
-function sortNodesByDistance()
+function sortNodesByDistance(unvisitedNodes)
 {
   unvisitedNodes.sort((nodeA, nodeB) => nodeA.distance - nodeB.distance);
 }
@@ -45,7 +45,7 @@ function sortNodesByDistance()
 //Updates the distance of neighbors by adding 1 to current distance.
 function updateUnvisitedNeighbors(node, board)
 {
-  var neighbors = getNeighbors(node, board);
+  let neighbors = this.getUnvisitedNeighbors(node, board);
   for(neighbor of neighbors)
   {
     neighbor.distance = node.distance + 1;
@@ -56,10 +56,10 @@ function updateUnvisitedNeighbors(node, board)
 //Neighbors are up, down, left, right as long as they haven't already been visited.
 function getUnvisitedNeighbors(node, board)
 {
-  var neighbors = [];
+  let neighbors = [];
   if(node.row > 0)
   {
-    neigbors.push(board.nodes[node.row - 1][node.col]);
+    neighbors.push(board.nodes[node.row - 1][node.col]);
   }
   if(node.row < board.nodes.length - 1)
   {
@@ -69,22 +69,23 @@ function getUnvisitedNeighbors(node, board)
   {
     neighbors.push(board.nodes[node.row][node.col - 1]);
   }
-  if(node.col < board.nodes[0].length)
+  if(node.col < board.nodes[0].length - 1)
   {
     neighbors.push(board.nodes[node.row][node.col + 1]);
   }
 
-  return neighbors.filter(neighbor => !neighbor.isVisited);
+  return neighbors.filter(neighbor => !neighbor.visited);
 }
 
 //Must be called after dijkstra and will return the path of nodes.
 function getNodePath(endNode)
 {
-  var nodePath = [];
+  let nodePath = [];
   let currentNode = endNode;
-  while(currentNode !== null)
+
+  while(currentNode != null)
   {
-    nodepath.unshift(currentNode);
+    nodePath.unshift(currentNode);
     currentNode = currentNode.previousNode;
   }
   return nodePath;

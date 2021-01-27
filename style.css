@@ -60,6 +60,26 @@ html, body
 
 }
 
+.unvisited
+{
+  background-color: gray;
+}
+
+.visited
+{
+  background-color: blue;
+}
+
+.path
+{
+  background-color: yellow;
+}
+
+.wall
+{
+  background-color: black;
+}
+
 .start
 {
   background-color: green;
@@ -68,14 +88,4 @@ html, body
 .target
 {
   background-color: red;
-}
-
-.unvisited
-{
-  background-color: gray;
-}
-
-.wall
-{
-  background-color: black;
 }

@@ -6,7 +6,9 @@
     <link rel="stylesheet" href="style.css" />
     <script type="text/javascript" src="node.js"></script>
     <script type="text/javascript" src="board.js"></script>
+        <script type="text/javascript" src="algorithms/dijkstra.js"></script>
     <script type="text/javascript" src="js.js"></script>
+
   </head>
   <body onload="createGrid()">
       <ul class="navbar">
@@ -23,6 +25,7 @@
           <a>Test</a>
         </li>
       </ul>
+      <button id="dijkstra-button">Visualize Dijkstra</button>
       <div id="board">
       </div>
   </body>

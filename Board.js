@@ -26,7 +26,7 @@ class Board
 
       for(let c = 0; c < this.cols; c++)
       {
-        var node = new Node("r" + r + "-c" + c);
+        var node = new Node("r" + r + "c" + c);
 
         var cell = document.createElement("div");
         cell.classList.add("cell");
@@ -56,17 +56,66 @@ class Board
     }
   }
 
-  getNodeByID(id)
+  visualizeDijkstra()
   {
-    return nodes[id.substring(id.indexOf("r") + 1, id.indexOf("c"))][id.substring(id.indexOf("c" + 1))];
+    let visitedNodesInOrder = dijkstra(this, this.start, this.target);
+    let nodePath = getNodePath(this.target);
+    this.animateDijkstra(visitedNodesInOrder, nodePath);
+  }
+
+  animateDijkstra(visitedNodesInOrder, nodePath)
+  {
+    for(let i = 0; i <= visitedNodesInOrder.length; i++)
+    {
+      if(i == visitedNodesInOrder.length)
+      {
+        setTimeout(() => {
+          this.animatePath(nodePath);
+        }, 30 * i);
+        return;
+      }
+      setTimeout(() => {
+        let node = visitedNodesInOrder[i];
+        let cell = document.getElementById("r" + node.row + "c" + node.col);
+        cell.classList.remove("unvisited");
+        cell.classList.add("visited");
+      }, 30 * i);
+    }
+  }
+
+  animatePath(nodePath)
+  {
+    for (let i = 0; i < nodePath.length; i++)
+    {
+      setTimeout(() => {
+        let node = nodePath[i];
+        let cell = document.getElementById("r" + node.row + "c" + node.col);
+        cell.classList.remove("visited");
+        cell.classList.add("path");
+      }, 50 * i);
+    }
+  }
+
+  resetBoard()
+  {
+    for(const row of this.nodes)
+    {
+      for(const node of row)
+      {
+        let cell = document.getElementById(node.id);
+        cell.classList.remove("visited");
+        cell.classList.remove("path");
+        cell.classList.add("unvisited");
+      }
+    }
   }
 
   getNodeList()
   {
     var list = [];
-    for(var i = 0; i < nodes.length; i++)
+    for(var i = 0; i < this.nodes.length; i++)
     {
-      list = list.concat(nodes[i]);
+      list = list.concat(this.nodes[i]);
     }
     return list;
   }
