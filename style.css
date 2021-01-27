@@ -40,16 +40,24 @@ html, body
 
 #board
 {
-  height: 700px;
-  width: 700px;
-  empty-cells: show;
+  border: 1px solid black;
+  display: table;
+  width: 800px;
+  height: 800px;
   margin: auto;
 }
 
-#board, #board tr, #board tr td
+.row
 {
-  border: 2px solid black;
-  border-collapse: collapse;
+  display: table-row;
+}
+
+.cell
+{
+  background-color: gray;
+  border: 1px solid black;
+  display: table-cell;
+
 }
 
 .start
