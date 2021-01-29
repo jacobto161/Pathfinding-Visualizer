@@ -10,6 +10,8 @@ class Board
     this.isMouseDown = false;
   }
 
+  //Creates DOM elements for grid using divs displayed as a table
+  //Creates Node Objects corresponding to each cell and stores them in nodes array.
   createBoard(body)
   {
     const DEFAULT_START_ROW = Math.floor(this.rows / 2);
@@ -27,24 +29,27 @@ class Board
 
       for(let c = 0; c < this.cols; c++)
       {
+        //All nodes and cells have id's of r_c_
         var node = new Node("r" + r + "c" + c);
 
         var cell = document.createElement("div");
         cell.classList.add("cell");
         cell.id = node.id;
+        //Setting a Start Node
         if(r == DEFAULT_START_ROW && c == DEFAULT_START_COL)
         {
           cell.classList.add("start");
           node.isStart = true;
           this.start = node;
         }
+        //Setting a Target Node
         else if(r == DEFAULT_TARGET_ROW && c == DEFAULT_TARGET_COL)
         {
           cell.classList.add("target");
           node.isTarget = true;
           this.target = node;
         }
-          cell.classList.add("unvisited");
+        cell.classList.add("unvisited");
 
         row.appendChild(cell);
         currentNodeRow.push(node);
@@ -70,6 +75,7 @@ class Board
     }
   }
 
+  //Calls Dijkstra Algorithm
   visualizeDijkstra()
   {
     this.update();
@@ -78,6 +84,7 @@ class Board
     this.animateDijkstra(visitedNodesInOrder, nodePath);
   }
 
+  //Find the new target and start nodes and assign them
   update()
   {
     for(const row of this.nodes)
@@ -96,6 +103,7 @@ class Board
     }
   }
 
+//uses the array of visited nodes returned by dijkstra to animate.
   animateDijkstra(visitedNodesInOrder, nodePath)
   {
     for(let i = 0; i <= visitedNodesInOrder.length; i++)
@@ -116,6 +124,7 @@ class Board
     }
   }
 
+//Uses the array of the path to animate.
   animatePath(nodePath)
   {
     for (let i = 0; i < nodePath.length; i++)
@@ -129,6 +138,7 @@ class Board
     }
   }
 
+//Resets the board to allow another algorithm to be visualized.
   resetBoard()
   {
     for(const row of this.nodes)
@@ -145,6 +155,7 @@ class Board
     }
   }
 
+//Returns a 1D list of nodes.
   getNodeList()
   {
     var list = [];

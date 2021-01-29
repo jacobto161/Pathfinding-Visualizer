@@ -17,6 +17,7 @@ class Node
   handleMouseDown()
   {
     let cell = document.getElementById(this.id);
+    //Make or Remove Wall
     if(!this.isStart && !this.isTarget)
     {
       this.isWall = !this.isWall;
@@ -30,16 +31,19 @@ class Node
       }
     }
 
+    //If Target and Start are same node, always drag target.
     if(this.isStart && this.isTarget)
     {
       isDraggingTarget = true;
     }
 
+    //Drag Start Node
     else if(this.isStart)
     {
       isDraggingStart = true;
     }
 
+    //Drag Target Node
     else if(this.isTarget)
     {
       isDraggingTarget = true;
@@ -51,26 +55,21 @@ class Node
     let cell = document.getElementById(this.id);
     if(isMouseDown)
     {
+      //Dragging Start Node
       if(isDraggingStart)
       {
         cell.classList.add("start");
         this.isWall = false;
         this.isStart = true;
-        if(this.isTarget)
-        {
-          isPassing = true;
-        }
       }
+      //Dragging Target Node
       else if(isDraggingTarget)
       {
         cell.classList.add("target");
         this.isWall = false;
         this.isTarget = true;
-        if(this.isStart)
-        {
-          isPassing = true;
-        }
       }
+      //Drawing Walls
       else if(!this.isStart && !this.isTarget)
       {
         this.isWall = !this.isWall;
@@ -91,22 +90,25 @@ class Node
     let cell = document.getElementById(this.id);
     if(isMouseDown)
     {
+      //Dragging Start/Target Over each other.
       if(this.isTarget && this.isStart && isDraggingStart)
       {
         cell.classList.remove("start")
         this.isStart = false;
       }
+      //Dragging Target
       else if(isDraggingTarget)
       {
         cell.classList.remove("target");
         this.isTarget = false;
       }
+      //Dragging Start
       else if(isDraggingStart)
       {
         cell.classList.remove("start");
         this.isStart = false;
       }
-
+      //Replace Wall
       if(cell.classList.contains("wall"))
       {
         this.isWall = true;

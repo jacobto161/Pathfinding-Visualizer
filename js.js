@@ -3,7 +3,6 @@ var MED_COLS = 25;
 var isMouseDown = false;
 var isDraggingStart = false;
 var isDraggingTarget = false;
-var isPassing = false;
 
 function createGrid()
 {
@@ -26,7 +25,6 @@ function mouse()
     isMouseDown = false;
     isDraggingStart = false;
     isDraggingTarget = false;
-    isPassing = false;
   }
 
   document.getElementById("board").onmouseleave = function()
