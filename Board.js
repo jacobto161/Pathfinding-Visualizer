@@ -7,6 +7,7 @@ class Board
     this.start = null;
     this.target = null;
     this.nodes = [];
+    this.isMouseDown = false;
   }
 
   createBoard(body)
@@ -43,10 +44,7 @@ class Board
           node.isTarget = true;
           this.target = node;
         }
-        else
-        {
           cell.classList.add("unvisited");
-        }
 
         row.appendChild(cell);
         currentNodeRow.push(node);
@@ -54,13 +52,48 @@ class Board
       body.appendChild(row);
       this.nodes.push(currentNodeRow);
     }
+    this.createEventListeners();
+  }
+
+  createEventListeners()
+  {
+    for(let r = 0; r < this.rows; r++)
+    {
+      for(let c = 0; c < this.cols; c++)
+      {
+        let cell = document.getElementById("r" + r + "c" + c);
+        let node = this.nodes[r][c];
+        cell.addEventListener("mousedown", function() {node.handleMouseDown();});
+        cell.addEventListener("mouseenter", function() {node.handleMouseEnter();});
+        cell.addEventListener("mouseleave", function() {node.handleMouseLeave();});
+      }
+    }
   }
 
   visualizeDijkstra()
   {
+    this.update();
     let visitedNodesInOrder = dijkstra(this, this.start, this.target);
     let nodePath = getNodePath(this.target);
     this.animateDijkstra(visitedNodesInOrder, nodePath);
+  }
+
+  update()
+  {
+    for(const row of this.nodes)
+    {
+      for(const node of row)
+      {
+        if(node.isTarget)
+        {
+          this.target = node
+        }
+        if(node.isStart)
+        {
+          this.start = node;
+        }
+      }
+    }
   }
 
   animateDijkstra(visitedNodesInOrder, nodePath)
@@ -71,7 +104,7 @@ class Board
       {
         setTimeout(() => {
           this.animatePath(nodePath);
-        }, 30 * i);
+        }, 5 * i);
         return;
       }
       setTimeout(() => {
@@ -79,7 +112,7 @@ class Board
         let cell = document.getElementById("r" + node.row + "c" + node.col);
         cell.classList.remove("unvisited");
         cell.classList.add("visited");
-      }, 30 * i);
+      }, 5 * i);
     }
   }
 
@@ -102,9 +135,11 @@ class Board
     {
       for(const node of row)
       {
+        node.previousNode = null;
+        node.distance = Infinity;
+        node.visited = false;
         let cell = document.getElementById(node.id);
-        cell.classList.remove("visited");
-        cell.classList.remove("path");
+        cell.classList.remove("visited", "path");
         cell.classList.add("unvisited");
       }
     }
