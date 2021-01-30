@@ -8,6 +8,11 @@ class Board
     this.target = null;
     this.nodes = [];
     this.isMouseDown = false;
+    let self = this;
+    this.createBoard(document.getElementById("board"));
+    this.createNodeEventListeners();
+    this.initializeButtons(self);
+    this.initializeMouseEventListeners();
   }
 
   //Creates DOM elements for grid using divs displayed as a table
@@ -57,10 +62,45 @@ class Board
       body.appendChild(row);
       this.nodes.push(currentNodeRow);
     }
-    this.createEventListeners();
   }
 
-  createEventListeners()
+  initializeButtons(self)
+  {
+    document.getElementById("dijkstra-button").onclick = function(){self.resetBoard(); self.visualizeDijkstra();};
+    document.getElementById("eraser-button").onclick = function()
+    {
+      toolEnabled = "erase";
+    }
+    document.getElementById("wall-button").onclick = function()
+    {
+      toolEnabled = "wall";
+    }
+  }
+
+  initializeMouseEventListeners()
+  {
+    document.getElementById("board").onmousedown = function()
+    {
+      isMouseDown = true;
+    }
+
+    document.getElementById("board").onmouseup = function()
+    {
+      isMouseDown = false;
+      isDraggingStart = false;
+      isDraggingTarget = false;
+    }
+
+    document.getElementById("board").onmouseleave = function()
+    {
+      if(!isDraggingStart && !isDraggingTarget)
+      {
+        isMouseDown = false;
+      }
+    }
+  }
+
+  createNodeEventListeners()
   {
     for(let r = 0; r < this.rows; r++)
     {

@@ -17,17 +17,18 @@ class Node
   handleMouseDown()
   {
     let cell = document.getElementById(this.id);
-    //Make or Remove Wall
+    //Make Wall or Erase
     if(!this.isStart && !this.isTarget)
     {
-      this.isWall = !this.isWall;
-      if(this.isWall)
+      if(toolEnabled == "erase")
       {
-        cell.classList.add("wall");
-      }
-      else
-      {
+        this.isWall = false;
         cell.classList.remove("wall");
+      }
+      else if(toolEnabled == "wall")
+      {
+        this.isWall = true;
+        cell.classList.add("wall");
       }
     }
 
@@ -69,17 +70,19 @@ class Node
         this.isWall = false;
         this.isTarget = true;
       }
-      //Drawing Walls
+      //Make Wall or Erase
       else if(!this.isStart && !this.isTarget)
       {
-        this.isWall = !this.isWall;
-        if(this.isWall)
+        if(toolEnabled == "erase")
         {
-          cell.classList.add("wall");
-        }
-        else
-        {
+          this.isWall = false;
           cell.classList.remove("wall");
+        }
+        else if(toolEnabled = "wall")
+        {
+          this.isWall = true;
+          cell.classList.add("wall");
+
         }
       }
     }
