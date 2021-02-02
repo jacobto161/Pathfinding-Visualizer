@@ -8,6 +8,7 @@ class Board
     this.target = null;
     this.nodes = [];
     this.isMouseDown = false;
+    this.currentAlgorithm = null;
     let self = this;
     this.createBoard(document.getElementById("board"));
     this.createNodeEventListeners();
@@ -35,7 +36,7 @@ class Board
       for(let c = 0; c < this.cols; c++)
       {
         //All nodes and cells have id's of r_c_
-        var node = new Node("r" + r + "c" + c);
+        var node = new Node("r" + r + "c" + c, this);
 
         var cell = document.createElement("div");
         cell.classList.add("cell");
@@ -66,7 +67,12 @@ class Board
 
   initializeButtons(self)
   {
-    document.getElementById("dijkstra-button").onclick = function(){self.resetBoard(); self.visualizeDijkstra();};
+    document.getElementById("dijkstra-button").onclick = function()
+    {
+      self.resetBoard();
+      self.visualizeDijkstra();
+      self.currentAlgorithm = "dijkstra";
+    }
     document.getElementById("eraser-button").onclick = function()
     {
       toolEnabled = "erase";
@@ -75,6 +81,10 @@ class Board
     {
       toolEnabled = "wall";
     }
+    document.getElementById("weight-button").onclick = function()
+    {
+      toolEnabled = "weight";
+    }
   }
 
   initializeMouseEventListeners()
@@ -82,6 +92,7 @@ class Board
     document.getElementById("board").onmousedown = function()
     {
       isMouseDown = true;
+      console.log(toolEnabled);
     }
 
     document.getElementById("board").onmouseup = function()
@@ -118,54 +129,59 @@ class Board
   //Calls Dijkstra Algorithm
   visualizeDijkstra()
   {
-    this.update();
     let visitedNodesInOrder = dijkstra(this, this.start, this.target);
     let nodePath = getNodePath(this.target);
-    this.animateDijkstra(visitedNodesInOrder, nodePath);
+    this.animateDijkstra(visitedNodesInOrder, nodePath, 5);
   }
 
-  //Find the new target and start nodes and assign them
-  update()
+  //Update Dijkstra Algorithm when conditions change
+  updateDijkstra()
   {
-    for(const row of this.nodes)
+    this.resetBoard();
+    let visitedNodesInOrder = dijkstra(this, this.start, this.target);
+    let nodePath = getNodePath(this.target);
+    this.instantDijkstra(visitedNodesInOrder, nodePath);
+  }
+
+  //Visualizes Dijkstra Algorithm instantly without anmation
+  instantDijkstra(visitedNodesInOrder, nodePath)
+  {
+    for(let node of visitedNodesInOrder)
     {
-      for(const node of row)
-      {
-        if(node.isTarget)
-        {
-          this.target = node
-        }
-        if(node.isStart)
-        {
-          this.start = node;
-        }
-      }
+      let cell = node.getCell();
+      cell.classList.remove("unvisited");
+      cell.classList.add("visited");
+    }
+    for(let node of nodePath)
+    {
+      let cell = node.getCell();
+      cell.classList.add("path");
     }
   }
 
 //uses the array of visited nodes returned by dijkstra to animate.
-  animateDijkstra(visitedNodesInOrder, nodePath)
+  animateDijkstra(visitedNodesInOrder, nodePath, timeInterval)
   {
     for(let i = 0; i <= visitedNodesInOrder.length; i++)
     {
       if(i == visitedNodesInOrder.length)
       {
         setTimeout(() => {
-          this.animatePath(nodePath);
-        }, 5 * i);
+          this.animatePath(nodePath, timeInterval);
+        }, timeInterval * i);
         return;
       }
       setTimeout(() => {
         let node = visitedNodesInOrder[i];
-        let cell = document.getElementById("r" + node.row + "c" + node.col);
+        let cell = node.getCell();
         cell.classList.remove("unvisited");
         cell.classList.add("visited");
-      }, 5 * i);
+      }, timeInterval * i);
     }
   }
 
 //Uses the array of the path to animate.
-  animatePath(nodePath)
+  animatePath(nodePath, timeInterval)
   {
     for (let i = 0; i < nodePath.length; i++)
     {
@@ -174,7 +190,7 @@ class Board
         let cell = document.getElementById("r" + node.row + "c" + node.col);
         cell.classList.remove("visited");
         cell.classList.add("path");
-      }, 50 * i);
+      }, timeInterval * 10 * i);
     }
   }
 

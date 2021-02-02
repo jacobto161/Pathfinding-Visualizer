@@ -1,17 +1,24 @@
 class Node
 {
-  constructor(id)
+  constructor(id, board)
   {
     this.id = id;
+    this.board = board;
     this.isStart = false;
     this.isTarget = false;
     this.row = parseInt(id.substring(1, id.indexOf("c")));
     this.col = parseInt(id.substring(id.indexOf("c") + 1));
     this.distance = Infinity;
-    this.weighted = false;
+    this.weight = 1;
     this.visited = false;
     this.isWall = false;
     this.previousNode = null;
+  }
+
+//Returns DOM cell of node
+  getCell()
+  {
+    return document.getElementById(this.id);
   }
 
   handleMouseDown()
@@ -23,12 +30,22 @@ class Node
       if(toolEnabled == "erase")
       {
         this.isWall = false;
-        cell.classList.remove("wall");
+        this.weight = 1;
+        cell.classList.remove("wall", "weight");
       }
       else if(toolEnabled == "wall")
       {
         this.isWall = true;
+        this.weight = 1;
         cell.classList.add("wall");
+        cell.classList.remove("weight");
+      }
+      else if(toolEnabled == "weight")
+      {
+        this.isWall = false;
+        cell.classList.remove("wall");
+        cell.classList.add("weight");
+        this.weight = DEFAULT_WEIGHTED;
       }
     }
 
@@ -62,6 +79,11 @@ class Node
         cell.classList.add("start");
         this.isWall = false;
         this.isStart = true;
+        this.board.start = this;
+        if(this.board.currentAlgorithm == "dijkstra")
+        {
+          this.board.updateDijkstra();
+        }
       }
       //Dragging Target Node
       else if(isDraggingTarget)
@@ -69,6 +91,11 @@ class Node
         cell.classList.add("target");
         this.isWall = false;
         this.isTarget = true;
+        this.board.target = this;
+        if(this.board.currentAlgorithm == "dijkstra")
+        {
+          this.board.updateDijkstra();
+        }
       }
       //Make Wall or Erase
       else if(!this.isStart && !this.isTarget)
@@ -76,13 +103,22 @@ class Node
         if(toolEnabled == "erase")
         {
           this.isWall = false;
-          cell.classList.remove("wall");
+          this.weight = 1;
+          cell.classList.remove("wall", "weight");
         }
-        else if(toolEnabled = "wall")
+        else if(toolEnabled == "wall")
         {
           this.isWall = true;
+          this.weight = 1;
           cell.classList.add("wall");
-
+          cell.classList.remove("weight");
+        }
+        else if(toolEnabled == "weight")
+        {
+          this.isWall = false;
+          cell.classList.remove("wall");
+          cell.classList.add("weight");
+          this.weight = DEFAULT_WEIGHTED;
         }
       }
     }

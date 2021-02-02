@@ -48,7 +48,7 @@ function updateUnvisitedNeighbors(node, board)
   let neighbors = this.getUnvisitedNeighbors(node, board);
   for(neighbor of neighbors)
   {
-    neighbor.distance = node.distance + 1;
+    neighbor.distance = node.distance + neighbor.weight;
     neighbor.previousNode = node;
   }
 }

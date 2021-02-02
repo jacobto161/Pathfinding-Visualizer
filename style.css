@@ -71,6 +71,11 @@ html, body
   background-color: blue;
 }
 
+.weight
+{
+  background-color: purple;
+}
+
 .path
 {
   background-color: yellow;
