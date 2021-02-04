@@ -4,6 +4,7 @@ var isMouseDown = false;
 var isDraggingStart = false;
 var isDraggingTarget = false;
 var toolEnabled = "wall";
+var updateOnChange = false;
 var DEFAULT_WEIGHTED = 3;
 
 function createGrid()

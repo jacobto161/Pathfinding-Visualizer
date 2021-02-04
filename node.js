@@ -80,9 +80,9 @@ class Node
         this.isWall = false;
         this.isStart = true;
         this.board.start = this;
-        if(this.board.currentAlgorithm == "dijkstra")
+        if(updateOnChange)
         {
-          this.board.updateDijkstra();
+          this.board.update();
         }
       }
       //Dragging Target Node
@@ -92,9 +92,9 @@ class Node
         this.isWall = false;
         this.isTarget = true;
         this.board.target = this;
-        if(this.board.currentAlgorithm == "dijkstra")
+        if(updateOnChange)
         {
-          this.board.updateDijkstra();
+          this.board.update();
         }
       }
       //Make Wall or Erase

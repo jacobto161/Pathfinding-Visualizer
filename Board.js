@@ -8,7 +8,6 @@ class Board
     this.target = null;
     this.nodes = [];
     this.isMouseDown = false;
-    this.currentAlgorithm = null;
     let self = this;
     this.createBoard(document.getElementById("board"));
     this.createNodeEventListeners();
@@ -67,11 +66,14 @@ class Board
 
   initializeButtons(self)
   {
-    document.getElementById("dijkstra-button").onclick = function()
+    document.getElementById("algorithm-selector").onchange = function()
     {
       self.resetBoard();
-      self.visualizeDijkstra();
-      self.currentAlgorithm = "dijkstra";
+      updateOnChange = false;
+    }
+    document.getElementById("visualize-button").onclick = function()
+    {
+      self.visualize();
     }
     document.getElementById("eraser-button").onclick = function()
     {
@@ -126,25 +128,51 @@ class Board
     }
   }
 
-  //Calls Dijkstra Algorithm
-  visualizeDijkstra()
+  //Visualizes the algorithm with animation.
+  visualize()
   {
-    let visitedNodesInOrder = dijkstra(this, this.start, this.target);
-    let nodePath = getNodePath(this.target);
-    this.animateDijkstra(visitedNodesInOrder, nodePath, 5);
+    updateOnChange = true;
+    this.resetBoard();
+    let currentAlgorithm = document.getElementById("algorithm-selector").value;
+    let visitedNodesInOrder;
+
+    //Selects selected algorithm
+    switch(currentAlgorithm)
+    {
+      case "dijkstra":
+        visitedNodesInOrder = dijkstra(this, this.start, this.target);
+        break;
+
+      case "bfs":
+        visitedNodesInOrder = bfs(this, this.start, this.target);
+        break;
+    }
+    let nodePath = this.getNodePath();
+    this.animate(visitedNodesInOrder, nodePath, 5);
   }
 
-  //Update Dijkstra Algorithm when conditions change
-  updateDijkstra()
+  //Update Algorithm when conditions change
+  update()
   {
     this.resetBoard();
-    let visitedNodesInOrder = dijkstra(this, this.start, this.target);
-    let nodePath = getNodePath(this.target);
-    this.instantDijkstra(visitedNodesInOrder, nodePath);
+    let currentAlgorithm = document.getElementById("algorithm-selector").value;
+    let visitedNodesInOrder;
+    switch(currentAlgorithm)
+    {
+      case "dijkstra":
+        visitedNodesInOrder = dijkstra(this, this.start, this.target);
+        break;
+
+      case "bfs":
+        visitedNodesInOrder = bfs(this, this.start, this.target);
+        break;
+    }
+    let nodePath = this.getNodePath();
+    this.instantAnimate(visitedNodesInOrder, nodePath);
   }
 
-  //Visualizes Dijkstra Algorithm instantly without anmation
-  instantDijkstra(visitedNodesInOrder, nodePath)
+  //Visualizes algorithms instantly without anmation
+  instantAnimate(visitedNodesInOrder, nodePath)
   {
     for(let node of visitedNodesInOrder)
     {
@@ -159,8 +187,8 @@ class Board
     }
   }
 
-//uses the array of visited nodes returned by dijkstra to animate.
-  animateDijkstra(visitedNodesInOrder, nodePath, timeInterval)
+//uses the array of visited nodes and path to animate.
+  animate(visitedNodesInOrder, nodePath, timeInterval)
   {
     for(let i = 0; i <= visitedNodesInOrder.length; i++)
     {
@@ -194,7 +222,30 @@ class Board
     }
   }
 
-//Resets the board to allow another algorithm to be visualized.
+  getUnvisitedNeighbors(node)
+  {
+    let neighbors = [];
+    if(node.row > 0)
+    {
+      neighbors.push(this.nodes[node.row - 1][node.col]);
+    }
+    if(node.row < this.nodes.length - 1)
+    {
+      neighbors.push(this.nodes[node.row + 1][node.col]);
+    }
+    if(node.col > 0)
+    {
+      neighbors.push(this.nodes[node.row][node.col - 1]);
+    }
+    if(node.col < this.nodes[0].length - 1)
+    {
+      neighbors.push(this.nodes[node.row][node.col + 1]);
+    }
+
+    return neighbors.filter(neighbor => !neighbor.visited);
+  }
+
+  //Resets the board to allow another algorithm to be visualized.
   resetBoard()
   {
     for(const row of this.nodes)
@@ -220,5 +271,19 @@ class Board
       list = list.concat(this.nodes[i]);
     }
     return list;
+  }
+
+  //Must be called after dijkstra and will return the path of nodes.
+  getNodePath()
+  {
+    let nodePath = [];
+    let currentNode = this.target;
+
+    while(currentNode != null)
+    {
+      nodePath.unshift(currentNode);
+      currentNode = currentNode.previousNode;
+    }
+    return nodePath;
   }
 }

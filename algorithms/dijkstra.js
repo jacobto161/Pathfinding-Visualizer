@@ -45,48 +45,10 @@ function sortNodesByDistance(unvisitedNodes)
 //Updates the distance of neighbors by adding 1 to current distance.
 function updateUnvisitedNeighbors(node, board)
 {
-  let neighbors = this.getUnvisitedNeighbors(node, board);
+  let neighbors = board.getUnvisitedNeighbors(node);
   for(neighbor of neighbors)
   {
     neighbor.distance = node.distance + neighbor.weight;
     neighbor.previousNode = node;
   }
-}
-
-//Neighbors are up, down, left, right as long as they haven't already been visited.
-function getUnvisitedNeighbors(node, board)
-{
-  let neighbors = [];
-  if(node.row > 0)
-  {
-    neighbors.push(board.nodes[node.row - 1][node.col]);
-  }
-  if(node.row < board.nodes.length - 1)
-  {
-    neighbors.push(board.nodes[node.row + 1][node.col]);
-  }
-  if(node.col > 0)
-  {
-    neighbors.push(board.nodes[node.row][node.col - 1]);
-  }
-  if(node.col < board.nodes[0].length - 1)
-  {
-    neighbors.push(board.nodes[node.row][node.col + 1]);
-  }
-
-  return neighbors.filter(neighbor => !neighbor.visited);
-}
-
-//Must be called after dijkstra and will return the path of nodes.
-function getNodePath(endNode)
-{
-  let nodePath = [];
-  let currentNode = endNode;
-
-  while(currentNode != null)
-  {
-    nodePath.unshift(currentNode);
-    currentNode = currentNode.previousNode;
-  }
-  return nodePath;
 }
