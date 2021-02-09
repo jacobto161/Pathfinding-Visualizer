@@ -8,6 +8,7 @@ class Board
     this.target = null;
     this.nodes = [];
     this.isMouseDown = false;
+    this.updateOnChange = false;
     let self = this;
     this.createBoard(document.getElementById("board"));
     this.createNodeEventListeners();
@@ -69,7 +70,7 @@ class Board
     document.getElementById("algorithm-selector").onchange = function()
     {
       self.resetBoard();
-      updateOnChange = false;
+      this.updateOnChange = false;
     }
     document.getElementById("visualize-button").onclick = function()
     {
@@ -131,7 +132,7 @@ class Board
   //Visualizes the algorithm with animation.
   visualize()
   {
-    updateOnChange = true;
+    this.updateOnChange = true;
     this.resetBoard();
     let currentAlgorithm = document.getElementById("algorithm-selector").value;
     let visitedNodesInOrder;
@@ -146,6 +147,10 @@ class Board
       case "bfs":
         visitedNodesInOrder = bfs(this, this.start, this.target);
         break;
+
+      case "astar":
+        visitedNodesInOrder = astar(this, this.start, this.target);
+        break;
     }
     let nodePath = this.getNodePath();
     this.animate(visitedNodesInOrder, nodePath, 5);
@@ -154,6 +159,10 @@ class Board
   //Update Algorithm when conditions change
   update()
   {
+    if(!this.updateOnChange)
+    {
+      return;
+    }
     this.resetBoard();
     let currentAlgorithm = document.getElementById("algorithm-selector").value;
     let visitedNodesInOrder;
@@ -165,6 +174,9 @@ class Board
 
       case "bfs":
         visitedNodesInOrder = bfs(this, this.start, this.target);
+        break;
+      case "astar":
+        visitedNodesInOrder = astar(this, this.start, this.target);
         break;
     }
     let nodePath = this.getNodePath();
@@ -224,7 +236,15 @@ class Board
 
   getUnvisitedNeighbors(node)
   {
+    let neighbors = this.getNeighbors(node);
+
+    return neighbors.filter(neighbor => !neighbor.visited);
+  }
+
+  getNeighbors(node)
+  {
     let neighbors = [];
+
     if(node.row > 0)
     {
       neighbors.push(this.nodes[node.row - 1][node.col]);
@@ -242,7 +262,7 @@ class Board
       neighbors.push(this.nodes[node.row][node.col + 1]);
     }
 
-    return neighbors.filter(neighbor => !neighbor.visited);
+    return neighbors;
   }
 
   //Resets the board to allow another algorithm to be visualized.
@@ -255,6 +275,8 @@ class Board
         node.previousNode = null;
         node.distance = Infinity;
         node.visited = false;
+        node.gScore = Infinity;
+        node.hScore = Infinity;
         let cell = document.getElementById(node.id);
         cell.classList.remove("visited", "path");
         cell.classList.add("unvisited");
@@ -285,5 +307,10 @@ class Board
       currentNode = currentNode.previousNode;
     }
     return nodePath;
+  }
+
+  getManhattanDistance(nodeA, nodeB)
+  {
+    return Math.abs(nodeA.row - nodeB.row) + Math.abs(nodeA.col - nodeB.col);
   }
 }

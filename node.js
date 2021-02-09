@@ -13,6 +13,8 @@ class Node
     this.visited = false;
     this.isWall = false;
     this.previousNode = null;
+    this.gScore = Infinity;
+    this.hScore = Infinity;
   }
 
 //Returns DOM cell of node
@@ -80,10 +82,7 @@ class Node
         this.isWall = false;
         this.isStart = true;
         this.board.start = this;
-        if(updateOnChange)
-        {
-          this.board.update();
-        }
+        this.board.update();
       }
       //Dragging Target Node
       else if(isDraggingTarget)
@@ -92,10 +91,7 @@ class Node
         this.isWall = false;
         this.isTarget = true;
         this.board.target = this;
-        if(updateOnChange)
-        {
-          this.board.update();
-        }
+        this.board.update();
       }
       //Make Wall or Erase
       else if(!this.isStart && !this.isTarget)
@@ -153,5 +149,10 @@ class Node
         this.isWall = true;
       }
     }
+  }
+
+  getFScore()
+  {
+    return this.gScore + this.hScore;
   }
 }
