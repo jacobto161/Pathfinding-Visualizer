@@ -70,7 +70,7 @@ class Board
     document.getElementById("algorithm-selector").onchange = function()
     {
       self.resetBoard();
-      this.updateOnChange = false;
+      self.updateOnChange = false;
     }
     document.getElementById("visualize-button").onclick = function()
     {
@@ -87,6 +87,11 @@ class Board
     document.getElementById("weight-button").onclick = function()
     {
       toolEnabled = "weight";
+    }
+    document.getElementById("clear-button").onclick = function()
+    {
+      self.resetBoard();
+      self.updateOnChange = false;
     }
   }
 
