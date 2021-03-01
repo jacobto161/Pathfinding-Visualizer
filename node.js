@@ -49,6 +49,10 @@ class Node
         cell.classList.add("weight");
         this.weight = DEFAULT_WEIGHTED;
       }
+      if(this.board.isAnyNeighborVisited(this))
+      {
+        this.board.update();
+      }
     }
 
     //If Target and Start are same node, always drag target.
@@ -115,6 +119,11 @@ class Node
           cell.classList.remove("wall");
           cell.classList.add("weight");
           this.weight = DEFAULT_WEIGHTED;
+        }
+
+        if(this.board.isAnyNeighborVisited(this))
+        {
+          this.board.update();
         }
       }
     }

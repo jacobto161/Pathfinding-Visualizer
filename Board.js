@@ -21,9 +21,9 @@ class Board
   createBoard(body)
   {
     const DEFAULT_START_ROW = Math.floor(this.rows / 2);
-    const DEFAULT_START_COL = Math.floor(this.rows / 5);
+    const DEFAULT_START_COL = Math.floor(this.cols / 5);
     const DEFAULT_TARGET_ROW = Math.floor(this.rows / 2);
-    const DEFAULT_TARGET_COL = Math.floor((this.rows / 5) * 4);
+    const DEFAULT_TARGET_COL = Math.floor((this.cols / 5) * 4);
 
     for(let r = 0; r < this.rows; r++)
     {
@@ -136,7 +136,6 @@ class Board
     this.resetBoard();
     let currentAlgorithm = document.getElementById("algorithm-selector").value;
     let visitedNodesInOrder;
-
     //Selects selected algorithm
     switch(currentAlgorithm)
     {
@@ -159,6 +158,7 @@ class Board
   //Update Algorithm when conditions change
   update()
   {
+    console.log("updating");
     if(!this.updateOnChange)
     {
       return;
@@ -239,6 +239,20 @@ class Board
     let neighbors = this.getNeighbors(node);
 
     return neighbors.filter(neighbor => !neighbor.visited);
+  }
+
+  isAnyNeighborVisited(node)
+  {
+    let neighbors = this.getNeighbors(node);
+
+    for(let neighbor of neighbors)
+    {
+      if(neighbor.visited)
+      {
+        return true;
+      }
+    }
+    return false;
   }
 
   getNeighbors(node)
