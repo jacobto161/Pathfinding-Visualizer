@@ -152,6 +152,10 @@ class Board
         visitedNodesInOrder = bfs(this, this.start, this.target);
         break;
 
+      case "dfs":
+        visitedNodesInOrder = dfs(this, this.start, this.target);
+        break;
+
       case "astar":
         visitedNodesInOrder = astar(this, this.start, this.target);
         break;
@@ -180,6 +184,11 @@ class Board
       case "bfs":
         visitedNodesInOrder = bfs(this, this.start, this.target);
         break;
+
+      case "dfs":
+        visitedNodesInOrder = dfs(this, this.start, this.target);
+        break;
+
       case "astar":
         visitedNodesInOrder = astar(this, this.start, this.target);
         break;
@@ -264,21 +273,24 @@ class Board
   {
     let neighbors = [];
 
-    if(node.row > 0)
+    if(node.col < this.nodes[0].length - 1)
     {
-      neighbors.push(this.nodes[node.row - 1][node.col]);
+      neighbors.push(this.nodes[node.row][node.col + 1]);
     }
-    if(node.row < this.nodes.length - 1)
-    {
-      neighbors.push(this.nodes[node.row + 1][node.col]);
-    }
+
     if(node.col > 0)
     {
       neighbors.push(this.nodes[node.row][node.col - 1]);
     }
-    if(node.col < this.nodes[0].length - 1)
+
+    if(node.row > 0)
     {
-      neighbors.push(this.nodes[node.row][node.col + 1]);
+      neighbors.push(this.nodes[node.row - 1][node.col]);
+    }
+
+    if(node.row < this.nodes.length - 1)
+    {
+      neighbors.push(this.nodes[node.row + 1][node.col]);
     }
 
     return neighbors;
