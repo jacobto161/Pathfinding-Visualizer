@@ -10,6 +10,7 @@
     <script type="text/javascript" src="algorithms/bfs.js"></script>
     <script type="text/javascript" src="algorithms/dfs.js"></script>
     <script type="text/javascript" src="algorithms/astar.js"></script>
+    <script type="text/javascript" src="mazes/dfsMaze.js"></script>
     <script type="text/javascript" src="js.js"></script>
 
   </head>
@@ -25,6 +26,11 @@
       <button id="eraser-button">Eraser Tool</button>
       <button id="weight-button">Weight Tool</button>
       <button id="clear-button">Clear</button>
+      <select name="mazes" id="maze-selector">
+          <option value="dfs">Depth First</option>
+      </select>
+      <button id="maze-button">Generate Maze</button>
+      <button id="reset-button">Reset</button>
       <div id="board">
       </div>
   </body>

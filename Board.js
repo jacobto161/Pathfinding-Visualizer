@@ -9,6 +9,10 @@ class Board
     this.nodes = [];
     this.isMouseDown = false;
     this.updateOnChange = false;
+    this.Default_START_ROW = Math.floor(this.rows / 2);
+    this.Default_START_COL = Math.floor(this.cols / 5);
+    this.Default_TARGET_ROW = Math.floor(this.rows / 2);
+    this.Default_TARGET_COL = Math.floor((this.cols / 5) * 4);
     let self = this;
     this.createBoard(document.getElementById("board"));
     this.createNodeEventListeners();
@@ -20,10 +24,6 @@ class Board
   //Creates Node Objects corresponding to each cell and stores them in nodes array.
   createBoard(body)
   {
-    const DEFAULT_START_ROW = Math.floor(this.rows / 2);
-    const DEFAULT_START_COL = Math.floor(this.cols / 5);
-    const DEFAULT_TARGET_ROW = Math.floor(this.rows / 2);
-    const DEFAULT_TARGET_COL = Math.floor((this.cols / 5) * 4);
 
     for(let r = 0; r < this.rows; r++)
     {
@@ -42,14 +42,14 @@ class Board
         cell.classList.add("cell");
         cell.id = node.id;
         //Setting a Start Node
-        if(r == DEFAULT_START_ROW && c == DEFAULT_START_COL)
+        if(r == this.Default_START_ROW && c == this.Default_START_COL)
         {
           cell.classList.add("start");
           node.isStart = true;
           this.start = node;
         }
         //Setting a Target Node
-        else if(r == DEFAULT_TARGET_ROW && c == DEFAULT_TARGET_COL)
+        else if(r == this.Default_TARGET_ROW && c == this.Default_TARGET_COL)
         {
           cell.classList.add("target");
           node.isTarget = true;
@@ -69,7 +69,7 @@ class Board
   {
     document.getElementById("algorithm-selector").onchange = function()
     {
-      self.resetBoard();
+      self.clearBoard();
       self.updateOnChange = false;
     }
     document.getElementById("visualize-button").onclick = function()
@@ -90,8 +90,16 @@ class Board
     }
     document.getElementById("clear-button").onclick = function()
     {
-      self.resetBoard();
+      self.clearBoard();
       self.updateOnChange = false;
+    }
+    document.getElementById("maze-button").onclick = function()
+    {
+      self.generateMaze();
+    }
+    document.getElementById("reset-button").onclick = function()
+    {
+      self.resetBoard();
     }
   }
 
@@ -134,11 +142,39 @@ class Board
     }
   }
 
+  generateMaze()
+  {
+    this.resetBoard();
+
+    for(let row of this.nodes)
+    {
+      for(let node of row)
+      {
+        let cell = document.getElementById(node.id);
+
+        cell.classList.add("wall");
+        node.isWall = true;
+      }
+    }
+
+    let currentAlgorithm = document.getElementById("maze-selector").value;
+    let visitedNodesInOrder;
+
+    switch(currentAlgorithm)
+    {
+      case "dfs":
+        visitedNodesInOrder = dfsMaze(this);
+        break;
+    }
+
+    this.animateMaze(visitedNodesInOrder);
+  }
+
   //Visualizes the algorithm with animation.
   visualize()
   {
     this.updateOnChange = true;
-    this.resetBoard();
+    this.clearBoard();
     let currentAlgorithm = document.getElementById("algorithm-selector").value;
     let visitedNodesInOrder;
     //Selects selected algorithm
@@ -172,7 +208,7 @@ class Board
     {
       return;
     }
-    this.resetBoard();
+    this.clearBoard();
     let currentAlgorithm = document.getElementById("algorithm-selector").value;
     let visitedNodesInOrder;
     switch(currentAlgorithm)
@@ -195,6 +231,15 @@ class Board
     }
     let nodePath = this.getNodePath();
     this.instantAnimate(visitedNodesInOrder, nodePath);
+  }
+
+  animateMaze(visitedNodesInOrder)
+  {
+    for(let node of visitedNodesInOrder)
+    {
+      let cell = node.getCell();
+      cell.classList.remove("wall");
+    }
   }
 
   //Visualizes algorithms instantly without anmation
@@ -255,6 +300,40 @@ class Board
     return neighbors.filter(neighbor => !neighbor.visited);
   }
 
+  getUnvisitedMazeNeighbors(node)
+  {
+    let neighbors = this.getMazeNeighbors(node);
+
+    return neighbors.filter(neighbor => !neighbor.visited);
+  }
+
+  getMazeNeighbors(node)
+  {
+    let neighbors = [];
+
+    if(node.col < this.nodes[0].length - 2)
+    {
+      neighbors.push(this.nodes[node.row][node.col + 2]);
+    }
+
+    if(node.col > 1)
+    {
+      neighbors.push(this.nodes[node.row][node.col - 2]);
+    }
+
+    if(node.row > 1)
+    {
+      neighbors.push(this.nodes[node.row - 2][node.col]);
+    }
+
+    if(node.row < this.nodes.length - 2)
+    {
+      neighbors.push(this.nodes[node.row + 2][node.col]);
+    }
+
+    return neighbors;
+  }
+
   isAnyNeighborVisited(node)
   {
     let neighbors = this.getNeighbors(node);
@@ -296,8 +375,8 @@ class Board
     return neighbors;
   }
 
-  //Resets the board to allow another algorithm to be visualized.
-  resetBoard()
+  //Clears the board to allow another algorithm to be visualized.
+  clearBoard()
   {
     for(const row of this.nodes)
     {
@@ -311,6 +390,38 @@ class Board
         let cell = document.getElementById(node.id);
         cell.classList.remove("visited", "path");
         cell.classList.add("unvisited");
+      }
+    }
+  }
+
+  resetBoard()
+  {
+    this.clearBoard();
+
+    for(let row of this.nodes)
+    {
+      for(let node of row)
+      {
+        let cell = document.getElementById(node.id);
+        cell.classList.remove("weight", "wall", "start", "target");
+        node.isStart = false;
+        node.isTarget = false;
+        node.isWall = false;
+        this.weight = 1;
+
+        if(node.row == this.Default_START_ROW && node.col == this.Default_START_COL)
+        {
+          cell.classList.add("start");
+          node.isStart = true;
+          this.start = node;
+        }
+
+        else if(node.row == this.Default_TARGET_ROW && node.col == this.Default_TARGET_COL)
+        {
+          cell.classList.add("target");
+          node.isTarget = true;
+          this.target = node;
+        }
       }
     }
   }

@@ -1,5 +1,5 @@
-var MED_ROWS = 20;
-var MED_COLS = 50;
+var MED_ROWS = 21;
+var MED_COLS = 51;
 var isMouseDown = false;
 var isDraggingStart = false;
 var isDraggingTarget = false;
