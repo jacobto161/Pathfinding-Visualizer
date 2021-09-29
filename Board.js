@@ -152,8 +152,12 @@ class Board
       {
         let cell = document.getElementById(node.id);
 
+
         cell.classList.add("wall");
-        node.isWall = true;
+        if(!node.isTarget && !node.isStart)
+        {
+          node.isWall = true;
+        }
       }
     }
 
@@ -397,6 +401,7 @@ class Board
   resetBoard()
   {
     this.clearBoard();
+    this.updateOnChange = false;
 
     for(let row of this.nodes)
     {
